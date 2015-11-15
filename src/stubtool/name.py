@@ -27,6 +27,8 @@ module_blacklist = {
     # Recursive imports.
     '_LWPCookieJar': 'cookielib',
     '_MozillaCookieJar': 'cookielib',
+    '_pytest.assertion.newinterpret': '_pytest.assertion.reinterpret',
+    'py._code._assertionnew': 'py._code.assertion',
     # Appears to inspect caller to set __module__
     '_io': 'io',
     # Runs code.
@@ -44,6 +46,8 @@ module_blacklist = {
     'dummy_threading': None,
     # Acts funny.
     'xxlimited': None,
+    # Not really a module, does special getattr() stuff.
+    'py.error': None,
     # Windows specific.
     'asyncio.windows_utils': None,
     'ctypes.wintypes': None,
@@ -64,6 +68,9 @@ renamed_modules = {
     'os.path': importlib.import_module('os.path').__name__,
     'xml.parsers.expat.errors': 'pyexpat.errors',
     'xml.parsers.expat.model': 'pyexpat.model',
+    'py.test': 'pytest',
+    'py.test.cmdline': 'pytest',
+    'py.test.collect': 'pytest',
 }
 
 
@@ -77,6 +84,7 @@ renamed_module_packages = {
 # Types that are known to be available under another name.
 type_rename = {
     '<unknown>.Purpose': 'ssl.Purpose',
+    '__builtin__.AssertionError': ['__builtin__.AssertionError', '_pytest.assertion.util.BuiltinAssertionError'],
     '__builtin__.BlockingIOError': '_io.BlockingIOError',
     '__builtin__.CArgObject': 'stubtool.types.ctypes.CArgObject',
     '__builtin__.CommentProxy': 'stubtool.types.elementtree.CommentProxy',
@@ -106,6 +114,7 @@ type_rename = {
     '__builtin__.bytearray_iterator': 'stubtool.types.collections.bytearray_iterator',
     '__builtin__.callable-iterator': 'stubtool.types.collections.callable_iterator',
     '__builtin__.cell': 'stubtool.types.CellType',
+    '__builtin__.classmethod_descriptor': 'stubtool.types.ClassMethodDescriptorType',
     '__builtin__.classobj': 'types.ClassType',
     '__builtin__.code': 'types.CodeType',
     '__builtin__.deque_iterator': 'stubtool.types.collections.deque_iterator',
@@ -173,6 +182,7 @@ type_rename = {
     '_pickle.Pdata': 'stubtool.types.pickle.Pdata',
     '_pickle.PicklerMemoProxy': 'stubtool.types.pickle.PicklerMemoProxy',
     '_pickle.UnpicklerMemoProxy': 'stubtool.types.pickle.UnpicklerMemoProxy',
+    '_pytest.main.CollectError': '_pytest.main.Collector.CollectError',
     '_sha.sha': 'stubtool.types.hash.sha1',
     '_sha1.sha1': 'stubtool.types.hash.sha1',
     '_sha256.sha224': 'stubtool.types.hash.sha224',
@@ -193,12 +203,15 @@ type_rename = {
     'anydbm.error': 'stubtool.types.dbm.error',
     'argparse._ChoicesPseudoAction': 'argparse._SubParsersAction._ChoicesPseudoAction',
     'argparse._Section': 'argparse.HelpFormatter._Section',
+    'builtins.AssertionError': ['builtins.AssertionError', '_pytest.assertion.util.BuiltinAssertionError', 'py._code.assertion.AssertionError'],
     'builtins.BlockingIOError': '_io.BlockingIOError',
     'builtins.CArgObject': 'stubtool.types.ctypes.CArgObject',
     'builtins.CommentProxy': 'stubtool.types.elementtree.CommentProxy',
     'builtins.Element': 'stubtool.types.elementtree.cElement',
     'builtins.ElementTree': '_elementtree.ElementTree',
     'builtins.EncodingMap': 'stubtool.types.encodings.EncodingMap',
+    'builtins.Failed': '_pytest.runner.Failed',
+    'builtins.Interrupted': '_pytest.main.Interrupted',
     'builtins.MultibyteCodec': 'stubtool.types.encodings.MultibyteCodec',
     'builtins.MultibyteIncrementalDecoder': '_multibytecodec.MultibyteIncrementalDecoder',
     'builtins.MultibyteIncrementalEncoder': '_multibytecodec.MultibyteIncrementalEncoder',
@@ -208,6 +221,7 @@ type_rename = {
     'builtins.NotImplementedType': 'builtins.NotImplemented.__class__',
     'builtins.PIProxy': 'stubtool.types.elementtree.PIProxy',
     'builtins.PyCapsule': 'stubtool.types.CapsuleType',
+    'builtins.Skipped': '_pytest.runner.Skipped',
     'builtins.StgDict': 'stubtool.types.ctypes.StgDict',
     'builtins.Struct': '_struct.Struct',
     'builtins.TreeBuilder': 'stubtool.types.elementtree.TreeBuilder',
@@ -330,6 +344,11 @@ type_rename = {
     'posix.ScandirIterator': 'stubtool.types.os.ScandirIterator',
     'profile.fake_code': 'profile.Profile.fake_code',
     'profile.fake_frame': 'profile.Profile.fake_frame',
+    'py._path.local.Checkers': 'py._path.local.LocalPath.Checkers',
+    'py._path.local.ImportMismatchError': 'py._path.local.LocalPath.ImportMismatchError',
+    'py._path.svnwc.Checkers': ['py._path.svnwc.SvnPathBase.Checkers', 'py._path.svnwc.SvnWCCommandPath.Checkers'],
+    'py._xmlgen.Attr': 'py._xmlgen.Tag.Attr',
+    'py._xmlgen.Style': 'py._xmlgen.html.Style',
     'pyexpat.xmlparser': 'pyexpat.XMLParserType',
     'sched.Event': ['sched.Event', 'stubtool.types.sched.BaseEvent'],
     'select.poll': 'stubtool.types.select.poll',
@@ -367,11 +386,17 @@ type_rename = {
 # but also occasionally for module-level objects created from <locals>.
 known_locals, known_unknown = {
     # Types that have been verified as using <locals>.
+    '_pytest.assertion.oldinterpret.BinaryArith': ['_pytest.assertion.oldinterpret.Interpretable'],
+    '_pytest.assertion.oldinterpret.UnaryArith': ['_pytest.assertion.oldinterpret.Interpretable'],
     'ctypes.CDLL.__init__.<locals>._FuncPtr': ['_ctypes.PyCFuncPtr'],
     'ctypes.CFUNCTYPE.<locals>.CFunctionType': ['_ctypes.PyCFuncPtr'],
     'ctypes.CFunctionType': ['_ctypes.PyCFuncPtr'],
     'ctypes.PYFUNCTYPE.<locals>.CFunctionType': ['_ctypes.PyCFuncPtr'],
     'ctypes._FuncPtr': ['_ctypes.PyCFuncPtr'],
+    'py._apipkg.AliasModule': ['builtins.module'],
+    'py._apipkg.AliasModule.<locals>.AliasModule': ['builtins.module'],
+    'py._code._assertionold.BinaryArith': ['py._code._assertionold.Interpretable'],
+    'py._code._assertionold.UnaryArith': ['py._code._assertionold.Interpretable'],
 }, {
     # Types that still require further investigation.
     #
@@ -399,7 +424,11 @@ def import_module(name):
         importlib.import_module(black)
     rv = importlib.import_module(name)
     if not any(name.startswith(n) for n in renamed_module_packages):
-        assert rv.__name__ == renamed_modules.get(name, name), (name, rv.__name__)
+        try:
+            rv_name = rv.__name__
+        except AttributeError as e:
+            rv_name = str(e)
+        assert rv_name == renamed_modules.get(name, name), (name, rv_name)
     return rv
 
 
@@ -471,6 +500,14 @@ def get_importable_name(typ):
     if is_generic_instance(typ):
         raise TypeError('generic: %r' % typ)
     if name in known_locals:
+        # TODO: deduplicate logic below for known_unknown
+        actual_bases = [get_declared_name(b) for b in typ.__bases__]
+        expected_bases = known_locals[name]
+        if expected_bases == []:
+            expected_bases = ['builtins.object']
+        if PY2:
+            expected_bases = [b.replace('builtins.', '__builtin__.') for b in expected_bases]
+        assert actual_bases == expected_bases, (name, actual_bases)
         raise TypeError('local: %r' % typ)
     names = type_rename.get(name, name)
     if isinstance(names, list):
@@ -490,7 +527,7 @@ def get_importable_name(typ):
         actual_bases = [get_declared_name(b) for b in typ.__bases__]
         expected_bases = known_unknown.get(name, None)
         if expected_bases is None:
-            raise TypeError('unknown unknown: %s: %r' % (name, actual_bases))
+            raise TypeError('unknown unknown: %r: %r,' % (name, actual_bases))
         if expected_bases == []:
             expected_bases = ['builtins.object']
         if PY2:

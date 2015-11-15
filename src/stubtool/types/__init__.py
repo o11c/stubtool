@@ -42,8 +42,7 @@ from ._util import PY2, PY3, PY33, PY35, only
 
 CapsuleType = type(_socket.CAPI)
 CellType = type(only((lambda x=0: lambda: x)().__closure__))
-if PY3:
-    ClassMethodDescriptorType = type(int.__dict__['from_bytes'])
+ClassMethodDescriptorType = type(bytearray.__dict__['fromhex'])
 DictProxyType = type(type.__dict__)
 EllipsisType = type(Ellipsis)
 MethodDescriptorType = type(dict.values)

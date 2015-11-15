@@ -1,1 +1,7 @@
+# Created when importing from non-installed version.
 *.pyc
+
+# Created when running tests.
+/.cache/
+/.tox/
+/src/stubtool.egg-info

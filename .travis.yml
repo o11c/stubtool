@@ -1,0 +1,42 @@
+sudo: false
+language: python
+
+install:
+  - pip install tox
+
+script:
+  - tox
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net##mypy"
+      - "chat.freenode.net#o11c"
+    template:
+      # Watch https://github.com/travis-ci/travis-core/pull/368
+      # Currently, dynamic green/red for pass/fail is not possible.
+      - "\x02%{result}\x02 %{repository_slug}@\x0306%{branch}\x03 in %{duration} (by %{author})"
+      - "commit \x0310%{commit}\x03: %{commit_subject}"
+      - "Changes: %{compare_url}"
+      - "Build #%{build_number}: %{build_url}"
+    use_notice: true
+
+matrix:
+  include:
+    # Ordered roughly from slowest to fastest,
+    # so that if not all builds start at the same time,
+    # they finish as fast as possible.
+    - python: "pypy3"
+      env: TOXENV=pypy3
+    - python: "pypy"
+      env: TOXENV=pypy
+    - python: "3.5"
+      env: TOXENV=py35
+    - python: "3.4"
+      env: TOXENV=py34
+    - python: "3.3"
+      env: TOXENV=py33
+    - python: "3.2"
+      env: TOXENV=py32
+    - python: "2.7"
+      env: TOXENV=py27

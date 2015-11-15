@@ -8,8 +8,10 @@ import os
 _STDOUT_FILENO = 1
 
 def _init():
+    real_term = os.getenv('TERM')
     master, slave, savestdout = -1, -1, -1
     try:
+        os.putenv('TERM', 'ansi')
         master, slave = os.openpty()
         savestdout = os.dup(_STDOUT_FILENO)
 
@@ -25,6 +27,10 @@ def _init():
         os.close(savestdout)
         os.close(slave)
         os.close(master)
+        if real_term is not None:
+            os.putenv('TERM', real_term)
+        else:
+            os.unsetenv('TERM')
 
 
 curses_window, curses_panel = _init()

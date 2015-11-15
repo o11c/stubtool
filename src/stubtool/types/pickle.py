@@ -1,6 +1,6 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
-import sys
+import io
 
 from ._util import PY2, last
 
@@ -9,13 +9,13 @@ if PY2:
     import cPickle
 
 
-    Pickler = type(cPickle.Pickler(sys.stdout))
-    Unpickler = type(cPickle.Unpickler(sys.stdin))
+    Pickler = type(cPickle.Pickler(io.StringIO()))
+    Unpickler = type(cPickle.Unpickler(io.StringIO('')))
 else:
     import _pickle
     import gc
 
 
-    Pdata = type(last(gc.get_referents(_pickle.Unpickler(sys.stdin))))
-    PicklerMemoProxy = type(_pickle.Pickler(sys.stdout).memo)
-    UnpicklerMemoProxy = type(_pickle.Unpickler(sys.stdin).memo)
+    Pdata = type(last(gc.get_referents(_pickle.Unpickler(io.StringIO('')))))
+    PicklerMemoProxy = type(_pickle.Pickler(io.StringIO()).memo)
+    UnpicklerMemoProxy = type(_pickle.Unpickler(io.StringIO('')).memo)

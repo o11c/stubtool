@@ -1,8 +1,8 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import _csv
-import sys
+import io
 
 
-reader = type(_csv.reader(sys.stdin))
-writer = type(_csv.writer(sys.stdout))
+reader = type(_csv.reader(io.StringIO('')))
+writer = type(_csv.writer(io.StringIO()))
